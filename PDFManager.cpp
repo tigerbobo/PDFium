@@ -3,6 +3,19 @@
 
 #include "exception\exceptionplus.h"
 
+#ifdef DEBUG
+#pragma comment(lib, "fdrm_d.lib")
+#pragma comment(lib, "formfiller_d.lib")
+#pragma comment(lib, "fpdfapi_d.lib")
+#pragma comment(lib, "fpdfdoc_d.lib")
+#pragma comment(lib, "fpdftext_d.lib")
+#pragma comment(lib, "fxcodec_d.lib")
+#pragma comment(lib, "fxcrt_d.lib")
+#pragma comment(lib, "fxedit_d.lib")
+#pragma comment(lib, "fxge_d.lib")
+#pragma comment(lib, "pdfium_d.lib")
+#pragma comment(lib, "pdfwindow_d.lib")
+#else
 #pragma comment(lib, "fdrm.lib")
 #pragma comment(lib, "formfiller.lib")
 #pragma comment(lib, "fpdfapi.lib")
@@ -14,6 +27,7 @@
 #pragma comment(lib, "fxge.lib")
 #pragma comment(lib, "pdfium.lib")
 #pragma comment(lib, "pdfwindow.lib")
+#endif
 
 
 CPDFManager::CPDFManager()
@@ -69,8 +83,16 @@ void CPDFManager::pdf2image(stdstring pdf_path_name, int page_index, int multipl
 	}
 	catch (CExceptionPlus &e)
 	{
+		FPDFBitmap_Destroy(bitmap);
+		FPDF_ClosePage(page);
+		FPDF_CloseDocument(pdf_doc);
+
 		throw e;
 	}
+
+	FPDFBitmap_Destroy(bitmap);
+	FPDF_ClosePage(page);
+	FPDF_CloseDocument(pdf_doc);
 }
 
 void CPDFManager::write_bmp(stdstring path_name, const void* buffer, int stride, int width, int height)
